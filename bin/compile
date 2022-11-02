@@ -12,13 +12,13 @@ DOWNLOAD_URL="https://storage.googleapis.com/kubernetes-release/release/$KUBECTL
 mkdir -p "$CACHE_DIR/kubectl/$KUBECTL_VERSION"
 CACHE_FILE="$CACHE_DIR/kubectl/$KUBECTL_VERSION/kubectl"
 
-if [ ! -e "$CACHE_FILE" ]; then
-  echo "Downloading kubectl"
-  curl --silent --show-error -o "$CACHE_FILE" "$DOWNLOAD_URL"
-  chmod +x "$CACHE_FILE"
-else
-  echo "Restoring cached kubectl binary"
-fi
+#if [ ! -e "$CACHE_FILE" ]; then
+echo "Downloading kubectl"
+curl --silent --show-error -o "$CACHE_FILE" "$DOWNLOAD_URL"
+chmod +x "$CACHE_FILE"
+#else
+#  echo "Restoring cached kubectl binary"
+#fi
 
 mkdir -p "$BUILD_DIR/.heroku/kubectl/bin"
 cp -a "$CACHE_FILE" "$BUILD_DIR/.heroku/kubectl/bin/"
