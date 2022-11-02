@@ -8,7 +8,7 @@ KUBECTL_VERSION=$(curl -L -s https://dl.k8s.io/release/stable.txt)
 
 echo "Installing kubectl version $KUBECTL_VERSION"
 
-$DOWNLOAD_URL="https://dl.k8s.io/release/$KUBECTL_VERSION/bin/linux/amd64/kubectl"
+DOWNLOAD_URL="https://dl.k8s.io/release/$KUBECTL_VERSION/bin/linux/amd64/kubectl"
 mkdir -p "$CACHE_DIR/kubectl/$KUBECTL_VERSION"
 CACHE_FILE="$CACHE_DIR/kubectl/$KUBECTL_VERSION/kubectl"
 
