@@ -1,9 +1,38 @@
 #!/bin/sh
 
-# Download and install kubectl
-curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+BUILD_DIR=$1
+CACHE_DIR=$2
+ENV_DIR=$3
+
+KUBECTL_VERSION=$(curl -L -s https://dl.k8s.io/release/stable.txt)
+
+echo "Installing kubectl version KUBECTL_VERSION"
+
+$DOWNLOAD_URL="https://dl.k8s.io/release/$KUBECTL_VERSION/bin/linux/amd64/kubectl"
+mkdir -p "$CACHE_DIR/kubectl/$KUBECTL_VERSION"
+CACHE_FILE="$CACHE_DIR/kubectl/$KUBECTL_VERSION/kubectl"
+
+if [ ! -e "$CACHE_FILE" ]; then
+    echo "Downloading kubectl" | indent
+    curl --silent --show-error -o "$CACHE_FILE" "$DOWNLOAD_URL"
+    chmod +x "$CACHE_FILE"
+else
+    echo "Restoring cached kubectl binary" | indent
+fi
+
+mkdir -p "$BUILD_DIR/.heroku/kubectl/bin"
+cp -a "$CACHE_FILE" "$BUILD_DIR/.heroku/kubectl/bin/"
+
+mkdir -p "$BUILD_DIR/.profile.d"
+cat > "$BUILD_DIR/.profile.d/kubectl.sh" <<'PROFILE'
+export PATH="$HOME/.heroku/kubectl/bin:$PATH"
+
+if [ ! -z "$KUBECONFIG" ]; then
+    mkdir -p "$HOME/.kube"
+    echo "$KUBECONFIG" | base64 -d > "$HOME/.kube/config"
+fi
 
 # Download and install helm
-curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
-chmod 700 get_helm.sh
-./get_helm.sh
+#curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+#chmod 700 get_helm.sh
+#./get_helm.sh

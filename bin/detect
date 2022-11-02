@@ -1,3 +1,4 @@
 #!/bin/sh
 
+echo "heroku-buildpack-helm-kubectl"
 exit 0
