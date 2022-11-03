@@ -6,22 +6,22 @@ ENV_DIR=$3
 
 KUBECTL_VERSION=$(curl -L -s https://dl.k8s.io/release/stable.txt)
 
+# Download and install kubectl
 echo "Installing kubectl version $KUBECTL_VERSION"
-
 DOWNLOAD_URL="https://storage.googleapis.com/kubernetes-release/release/$KUBECTL_VERSION/bin/linux/amd64/kubectl"
 mkdir -p "$CACHE_DIR/kubectl/$KUBECTL_VERSION"
-CACHE_FILE="$CACHE_DIR/kubectl/$KUBECTL_VERSION/kubectl"
+KUBECTL_CACHE_FILE="$CACHE_DIR/kubectl/$KUBECTL_VERSION/kubectl"
 
-#if [ ! -e "$CACHE_FILE" ]; then
-echo "Downloading kubectl"
-curl --silent --show-error -o "$CACHE_FILE" "$DOWNLOAD_URL"
-chmod +x "$CACHE_FILE"
-#else
-#  echo "Restoring cached kubectl binary"
-#fi
+if [ ! -e "$KUBECTL_CACHE_FILE" ]; then
+  echo "Downloading kubectl"
+  curl --silent --show-error -o "$KUBECTL_CACHE_FILE" "$DOWNLOAD_URL"
+  chmod +x "$KUBECTL_CACHE_FILE"
+else
+  echo "Restoring cached kubectl binary"
+fi
 
 mkdir -p "$BUILD_DIR/.heroku/kubectl/bin"
-cp -a "$CACHE_FILE" "$BUILD_DIR/.heroku/kubectl/bin/"
+cp -a "$KUBECTL_CACHE_FILE" "$BUILD_DIR/.heroku/kubectl/bin/"
 
 mkdir -p "$BUILD_DIR/.profile.d"
 cat > "$BUILD_DIR/.profile.d/kubectl.sh" <<'PROFILE'
@@ -33,6 +33,26 @@ if [ ! -z "$KUBECONFIG" ]; then
 fi
 
 # Download and install helm
-#curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
-#chmod 700 get_helm.sh
-#./get_helm.sh
+
+HELM_VERSION="v3.10.1"
+echo "Installing helm version $HELM_VERSION"
+
+mkdir -p "$CACHE_DIR/helm/$HELM_VERSION"
+HELM_CACHE_FILE="$CACHE_DIR/helm/$HELM_VERSION/helm"
+
+if [ ! -e "$HELM_CACHE_FILE" ]; then
+  echo "Downloading helm"
+  curl -fsSL -o "$CACHE_DIR/helm/tmp/helm.tar" "https://get.helm.sh/helm-$HELM_VERSION-linux-amd64.tar.gz"
+  tar -zxvf "$CACHE_DIR/helm/tmp/helm.tar" -C "$CACHE_DIR/helm/tmp"
+  cp "$CACHE_DIR/helm/tmp/linux-amd64/helm" $HELM_CACHE_FILE
+  chmod +x "$HELM_CACHE_FILE"
+else
+  echo "Restoring cached helm binary"
+fi
+
+mkdir -p "$BUILD_DIR/.heroku/helm/bin"
+cp -a "$HELM_CACHE_FILE" "$BUILD_DIR/.heroku/helm/bin/"
+
+mkdir -p "$BUILD_DIR/.profile.d"
+cat > "$BUILD_DIR/.profile.d/helm.sh" <<'PROFILE'
+export PATH="$HOME/.heroku/helm/bin:$PATH"
