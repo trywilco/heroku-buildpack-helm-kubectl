@@ -40,11 +40,13 @@ echo "Installing helm version $HELM_VERSION"
 
 mkdir -p "$CACHE_DIR/helm/$HELM_VERSION"
 HELM_CACHE_FILE="$CACHE_DIR/helm/$HELM_VERSION/helm"
+TEMP_HELM_DOWNLOAD_DIR="$CACHE_DIR/helm/tmp"
 
 if [ ! -e "$HELM_CACHE_FILE" ]; then
   echo "Downloading helm"
-  curl -fsSL -o "$CACHE_DIR/helm/tmp/helm.tar" "https://get.helm.sh/helm-$HELM_VERSION-linux-amd64.tar.gz"
-  tar -zxvf "$CACHE_DIR/helm/tmp/helm.tar" -C "$CACHE_DIR/helm/tmp"
+  mkdir -p $TEMP_HELM_DOWNLOAD_DIR
+  curl -fsSL -o "$TEMP_HELM_DOWNLOAD_DIR/helm.tar.gz" "https://get.helm.sh/helm-$HELM_VERSION-linux-amd64.tar.gz"
+  tar -zxvf "$TEMP_HELM_DOWNLOAD_DIR/helm.tar.gz" -C "$CACHE_DIR/helm/tmp"
   cp "$CACHE_DIR/helm/tmp/linux-amd64/helm" $HELM_CACHE_FILE
   chmod +x "$HELM_CACHE_FILE"
 else
