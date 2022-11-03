@@ -24,13 +24,14 @@ mkdir -p "$BUILD_DIR/.heroku/kubectl/bin"
 cp -a "$KUBECTL_CACHE_FILE" "$BUILD_DIR/.heroku/kubectl/bin/"
 
 mkdir -p "$BUILD_DIR/.profile.d"
-cat > "$BUILD_DIR/.profile.d/kubectl.sh" <<'PROFILE'
+cat > "$BUILD_DIR/.profile.d/kubectl.sh" <<'KUBECTL'
 export PATH="$HOME/.heroku/kubectl/bin:$PATH"
 
 if [ ! -z "$KUBECONFIG" ]; then
   mkdir -p "$HOME/.kube"
   echo "$KUBECONFIG" | base64 -d > "$HOME/.kube/config"
 fi
+KUBECTL
 
 # Download and install helm
 
@@ -54,5 +55,6 @@ mkdir -p "$BUILD_DIR/.heroku/helm/bin"
 cp -a "$HELM_CACHE_FILE" "$BUILD_DIR/.heroku/helm/bin/"
 
 mkdir -p "$BUILD_DIR/.profile.d"
-cat > "$BUILD_DIR/.profile.d/helm.sh" <<'PROFILE'
+cat > "$BUILD_DIR/.profile.d/helm.sh" <<'HELM'
 export PATH="$HOME/.heroku/helm/bin:$PATH"
+HELM
