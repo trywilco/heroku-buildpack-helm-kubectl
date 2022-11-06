@@ -4,35 +4,6 @@ BUILD_DIR=$1
 CACHE_DIR=$2
 ENV_DIR=$3
 
-KUBECTL_VERSION=$(curl -L -s https://dl.k8s.io/release/stable.txt)
-
-# Download and install kubectl
-echo "Installing kubectl version $KUBECTL_VERSION"
-DOWNLOAD_URL="https://storage.googleapis.com/kubernetes-release/release/$KUBECTL_VERSION/bin/linux/amd64/kubectl"
-mkdir -p "$CACHE_DIR/kubectl/$KUBECTL_VERSION"
-KUBECTL_CACHE_FILE="$CACHE_DIR/kubectl/$KUBECTL_VERSION/kubectl"
-
-if [ ! -e "$KUBECTL_CACHE_FILE" ]; then
-  echo "Downloading kubectl"
-  curl --silent --show-error -o "$KUBECTL_CACHE_FILE" "$DOWNLOAD_URL"
-  chmod +x "$KUBECTL_CACHE_FILE"
-else
-  echo "Restoring cached kubectl binary"
-fi
-
-mkdir -p "$BUILD_DIR/.heroku/kubectl/bin"
-cp -a "$KUBECTL_CACHE_FILE" "$BUILD_DIR/.heroku/kubectl/bin/"
-
-mkdir -p "$BUILD_DIR/.profile.d"
-cat > "$BUILD_DIR/.profile.d/kubectl.sh" <<'KUBECTL'
-export PATH="$HOME/.heroku/kubectl/bin:$PATH"
-
-if [ ! -z "$KUBECONFIG" ]; then
-  mkdir -p "$HOME/.kube"
-  echo "$KUBECONFIG" | base64 -d > "$HOME/.kube/config"
-fi
-KUBECTL
-
 # Download and install helm
 
 HELM_VERSION="v3.10.1"
@@ -50,7 +21,7 @@ if [ ! -e "$HELM_CACHE_FILE" ]; then
   cp "$CACHE_DIR/helm/tmp/linux-amd64/helm" $HELM_CACHE_FILE
   chmod +x "$HELM_CACHE_FILE"
 else
-  echo "Restoring cached helm binary"
+  echo "Restoring cached helm binary (version $HELM_VERSION)"
 fi
 
 mkdir -p "$BUILD_DIR/.heroku/helm/bin"
