@@ -4,11 +4,12 @@ BUILD_DIR=$1
 CACHE_DIR=$2
 ENV_DIR=$3
 
-KUBECTL_VERSION=$(curl -L -s https://dl.k8s.io/release/stable.txt)
+KUBECTL_VERSION=$(curl -L -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)
 
 # Download and install kubectl
 echo "Installing kubectl version $KUBECTL_VERSION"
 DOWNLOAD_URL="https://storage.googleapis.com/kubernetes-release/release/$KUBECTL_VERSION/bin/linux/amd64/kubectl"
+
 mkdir -p "$CACHE_DIR/kubectl/$KUBECTL_VERSION"
 KUBECTL_CACHE_FILE="$CACHE_DIR/kubectl/$KUBECTL_VERSION/kubectl"
 
