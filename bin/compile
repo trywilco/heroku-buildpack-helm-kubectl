@@ -4,9 +4,6 @@ BUILD_DIR=$1
 CACHE_DIR=$2
 ENV_DIR=$3
 
-echo "Cleaning $CACHE_DIR/kubectl"
-rm -rf $CACHE_DIR/kubectl
-
 KUBECTL_VERSION=$(curl -L -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)
 
 # Download and install kubectl
